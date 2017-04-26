@@ -5,9 +5,12 @@
  */
 package pack.view;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.ResultSet; 
 import java.sql.SQLException;
 import java.util.ArrayList; 
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level; 
 import java.util.logging.Logger;
@@ -16,6 +19,7 @@ import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.JTextField; 
+import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel; 
 import pack.control.c_koneksi; 
 import pack.control.controllerToko;
@@ -29,14 +33,21 @@ public class home extends javax.swing.JFrame {
 
     controllerToko ctoko;
     List<m_toko>listdata = new ArrayList<>();
+    String nol_jam="";
+    String nol_menit="";
+    String nol_detik="";
     
     /**
      * Creates new form home
      */
     public home() {
         initComponents();
-        ctoko = new controllerToko (this);
+        ctoko = new controllerToko(this);
         ctoko.isiTable();
+        setTanggal();
+        setJam();
+        String user = null;
+        txtAdmin.setText(user);
     }
 
     /**
@@ -64,23 +75,32 @@ public class home extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblData = new javax.swing.JTable();
         jLabel5 = new javax.swing.JLabel();
-        cbAwal1 = new javax.swing.JComboBox<>();
+        cbCari = new javax.swing.JComboBox<>();
         btnCari = new javax.swing.JButton();
         jPanel6 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         lblJam = new javax.swing.JLabel();
         lbltanggal = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        lblAdmin = new javax.swing.JLabel();
+        txtAdmin = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
         btnSave = new javax.swing.JButton();
         btnClear = new javax.swing.JButton();
-        btnRefresh = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         btnExit = new javax.swing.JButton();
         btnEdit = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                formMouseClicked(evt);
+            }
+        });
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
         getContentPane().setLayout(null);
 
         jPanel2.setBackground(new java.awt.Color(255, 153, 153));
@@ -115,7 +135,7 @@ public class home extends javax.swing.JFrame {
         txtHarga.setBounds(130, 190, 250, 30);
 
         cbJenis.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        cbJenis.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-- Pilih Jenis --", "Stasiun Malang", "Stasiun Surabaya", "Stasiun Blitar", "Stasiun Tulungagung", "Stasiun Sidoarjo" }));
+        cbJenis.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-- Pilih Jenis --", "Pack", "Plastik" }));
         cbJenis.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbJenisActionPerformed(evt);
@@ -125,7 +145,7 @@ public class home extends javax.swing.JFrame {
         cbJenis.setBounds(130, 150, 250, 30);
 
         cbKategori.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        cbKategori.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-- Pilih Kategori --", "Stasiun Malang", "Stasiun Surabaya", "Stasiun Blitar", "Stasiun Tulungagung", "Stasiun Sidoarjo" }));
+        cbKategori.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-- Pilih Kategori --", "Makanan", "Minuman", "Baranglain" }));
         jPanel4.add(cbKategori);
         cbKategori.setBounds(130, 110, 250, 30);
 
@@ -154,20 +174,25 @@ public class home extends javax.swing.JFrame {
                 "Kode Barang", "Nama Barang", "Kategori Barang", "Jenis Packaging", "Harga"
             }
         ));
+        tblData.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblDataMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblData);
 
         jPanel5.add(jScrollPane1);
         jScrollPane1.setBounds(10, 50, 630, 150);
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabel5.setText("Pencarian Berdasrkan Kategori Makanan");
+        jLabel5.setText("Pencarian Berdasrkan Kategori Barang");
         jPanel5.add(jLabel5);
         jLabel5.setBounds(10, 10, 260, 30);
 
-        cbAwal1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        cbAwal1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-- Pilih Stasiun --", "Stasiun Malang", "Stasiun Surabaya", "Stasiun Blitar", "Stasiun Tulungagung", "Stasiun Sidoarjo" }));
-        jPanel5.add(cbAwal1);
-        cbAwal1.setBounds(270, 10, 150, 30);
+        cbCari.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        cbCari.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "-- Pilih Kategori --", "Makanan", "Minuman", "Baranglain" }));
+        jPanel5.add(cbCari);
+        cbCari.setBounds(270, 10, 150, 30);
 
         btnCari.setText("Cari");
         btnCari.addActionListener(new java.awt.event.ActionListener() {
@@ -191,13 +216,11 @@ public class home extends javax.swing.JFrame {
 
         lblJam.setBackground(new java.awt.Color(255, 255, 255));
         lblJam.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        lblJam.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel6.add(lblJam);
         lblJam.setBounds(510, 60, 120, 30);
 
         lbltanggal.setBackground(new java.awt.Color(255, 255, 255));
         lbltanggal.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        lbltanggal.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jPanel6.add(lbltanggal);
         lbltanggal.setBounds(510, 20, 100, 30);
 
@@ -206,9 +229,14 @@ public class home extends javax.swing.JFrame {
         jPanel6.add(jLabel1);
         jLabel1.setBounds(10, 0, 80, 30);
 
-        lblAdmin.setBorder(new javax.swing.border.MatteBorder(null));
-        jPanel6.add(lblAdmin);
-        lblAdmin.setBounds(100, 0, 100, 30);
+        txtAdmin.setEditable(false);
+        txtAdmin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtAdminActionPerformed(evt);
+            }
+        });
+        jPanel6.add(txtAdmin);
+        txtAdmin.setBounds(90, 0, 100, 30);
 
         jPanel2.add(jPanel6);
         jPanel6.setBounds(10, 10, 650, 100);
@@ -239,17 +267,6 @@ public class home extends javax.swing.JFrame {
         jPanel3.add(btnClear);
         btnClear.setBounds(10, 50, 100, 30);
 
-        btnRefresh.setBackground(new java.awt.Color(255, 204, 204));
-        btnRefresh.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        btnRefresh.setText("Refresh");
-        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRefreshActionPerformed(evt);
-            }
-        });
-        jPanel3.add(btnRefresh);
-        btnRefresh.setBounds(10, 200, 100, 30);
-
         btnDelete.setBackground(new java.awt.Color(255, 204, 204));
         btnDelete.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         btnDelete.setText("Delete");
@@ -259,8 +276,9 @@ public class home extends javax.swing.JFrame {
             }
         });
         jPanel3.add(btnDelete);
-        btnDelete.setBounds(120, 200, 100, 30);
+        btnDelete.setBounds(10, 170, 100, 30);
 
+        btnExit.setBackground(new java.awt.Color(255, 204, 204));
         btnExit.setText("Exit");
         btnExit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -268,8 +286,9 @@ public class home extends javax.swing.JFrame {
             }
         });
         jPanel3.add(btnExit);
-        btnExit.setBounds(120, 160, 100, 30);
+        btnExit.setBounds(120, 170, 100, 30);
 
+        btnEdit.setBackground(new java.awt.Color(255, 204, 204));
         btnEdit.setText("Edit");
         btnEdit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -277,7 +296,7 @@ public class home extends javax.swing.JFrame {
             }
         });
         jPanel3.add(btnEdit);
-        btnEdit.setBounds(10, 160, 100, 30);
+        btnEdit.setBounds(10, 130, 100, 30);
 
         jPanel2.add(jPanel3);
         jPanel3.setBounds(430, 120, 230, 240);
@@ -305,11 +324,6 @@ public class home extends javax.swing.JFrame {
         ctoko.Reset();
     }//GEN-LAST:event_btnClearActionPerformed
 
-    private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
-        // TODO add your handling code here:
-        selectData();
-    }//GEN-LAST:event_btnRefreshActionPerformed
-
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         // TODO add your handling code here:
         ctoko.Hapus();
@@ -330,8 +344,35 @@ public class home extends javax.swing.JFrame {
     private void btnCariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCariActionPerformed
         // TODO add your handling code here:
         ctoko.CariKategori();
-        ctoko.isiTable();
+        // ctoko.isiTable();
     }//GEN-LAST:event_btnCariActionPerformed
+
+    private void txtAdminActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtAdminActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtAdminActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        // TODO add your handling code here:
+        String Halouser = login.useraktif;
+        txtAdmin.setText(Halouser);
+       
+    }//GEN-LAST:event_formWindowOpened
+
+    private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_formMouseClicked
+
+    private void tblDataMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDataMouseClicked
+        // TODO add your handling code here:
+        int baris = tblData.getSelectedRow();
+        if(baris != -1){
+            txtKode.setText(tblData.getValueAt(baris, 0).toString());
+            txtNama.setText((String) tblData.getValueAt(baris, 1));
+            cbKategori.setSelectedItem(tblData.getValueAt(baris, 2).toString());
+            cbJenis.setSelectedItem(tblData.getValueAt(baris, 3).toString());
+            txtHarga.setText(tblData.getValueAt(baris, 4).toString());
+        }
+    }//GEN-LAST:event_tblDataMouseClicked
 
     /**
      * @param args the command line arguments
@@ -374,9 +415,8 @@ public class home extends javax.swing.JFrame {
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnExit;
-    private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnSave;
-    private javax.swing.JComboBox<String> cbAwal1;
+    private javax.swing.JComboBox<String> cbCari;
     private javax.swing.JComboBox<String> cbJenis;
     private javax.swing.JComboBox<String> cbKategori;
     private javax.swing.JLabel jLabel1;
@@ -393,17 +433,102 @@ public class home extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel lblAdmin;
     private javax.swing.JLabel lblJam;
     private javax.swing.JLabel lbltanggal;
     private javax.swing.JTable tblData;
+    private javax.swing.JTextField txtAdmin;
     private javax.swing.JTextField txtHarga;
     private javax.swing.JTextField txtKode;
     private javax.swing.JTextField txtNama;
     // End of variables declaration//GEN-END:variables
 
-    private void selectData() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+    public JTextField getTxtKode() {
+        //To change body of generated methods, choose Tools | Templates.
+         return txtKode;
+    }
+
+    public JTextField getTxtNama() {
+        //To change body of generated methods, choose Tools | Templates.
+         return txtNama;
+    }
+
+    public JTextField getTxtHarga() {
+        //To change body of generated methods, choose Tools | Templates.
+         return txtHarga;
+    }
+
+    public JComboBox getCbKategori() {
+        //To change body of generated methods, choose Tools | Templates.
+         return cbKategori;
+    }
+
+    public JComboBox getCbJenis() {
+        //To change body of generated methods, choose Tools | Templates.
+         return cbJenis;
+    }
+    
+    public JComboBox getCbCariKategori(){  
+        return cbCari;    
+    }   
+     
+    public JButton getButtonHapus(){   
+        return btnDelete;   
+    }   
+    
+    public JButton getButtonBersih(){  
+        return btnClear;  
+    }   
+    
+    public JButton getButtonSimpan(){ 
+        return btnSave;   
+    }  
+    
+    public JButton getButtonUbah(){  
+        return btnEdit; 
+    }    
+    
+    public JButton getButtonKeluar(){     
+        return btnExit;  
+    }  
+    
+    public JTable getTableData(){     
+        return tblData;  
+    }
+
+   
+    public void setTanggal(){
+        java.util.Date skrg = new java.util.Date();
+        java.text.SimpleDateFormat kal = new java.text.SimpleDateFormat("dd/MM/yyyy");
+        lbltanggal.setText(kal.format(skrg));
+    }
+    
+    public void setJam(){
+        ActionListener taskPerformer = new ActionListener() {
+            
+            public void actionPerformed(ActionEvent evt) {
+                Date dt = new Date();
+                int nilai_jam = dt.getHours();
+                int nilai_menit = dt.getMinutes();
+                int nilai_detik = dt.getSeconds();
+                
+                if(nilai_jam<= 9){
+                    nol_jam = "0";
+                }
+                if(nilai_menit <= 9){
+                    nol_menit = "0";
+                }
+                if(nilai_detik <= 9){
+                    nol_detik = "0";
+                }
+                
+                String jam = nol_jam + Integer.toString(nilai_jam);
+                String menit = nol_menit + Integer.toString(nilai_menit);
+                String detik = nol_detik + Integer.toString(nilai_detik);
+                lblJam.setText("Jam : "+ jam + ":" + menit + ":" + detik);
+            }
+        };
+        new Timer(100, taskPerformer).start();
     }
 
 

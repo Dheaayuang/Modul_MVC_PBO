@@ -14,6 +14,7 @@ import javax.swing.table.AbstractTableModel;
  */
 public class tableModelToko extends AbstractTableModel{
     List<m_toko>lt;    
+    
     public tableModelToko(List<m_toko> lt) { 
         this.lt=lt;    
     }

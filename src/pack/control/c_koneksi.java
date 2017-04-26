@@ -43,23 +43,23 @@ public class c_koneksi {
         return status;  
     }
      
-    public static Connection setKoneksi(){
-        String konString = "jdbc:mysql://localhost:3360/toko";
+    public static Connection setKoneksi() {
+        String konString = "jdbc:mysql://localhost:3306/toko";
         Connection koneksi = null;
-        try{
+        try {
             Class.forName("com.mysql.jdbc.Driver");
-            koneksi = (Connection)
-                    DriverManager.getConnection(konString,"root","");
-            System.out.println("KoneksiBerhasil");
-        }catch(ClassNotFoundException ex){
-            Logger.getLogger(c_koneksi.class.getName()).log(Level.SEVERE,null, ex);
-            System.out.println("Koneksi Gagal");  
-        } catch (SQLException ex) {        
-            Logger.getLogger(c_koneksi.class.getName()).log(Level.SEVERE,null,ex);  
-            System.out.println("Koneksi Gagal");   
-        }       
-        return koneksi;    
-    } 
+            koneksi = (Connection) DriverManager.getConnection(konString, "root", "");
+            System.out.println("Koneksi Berhasil");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(c_koneksi.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Koneksi Gagal");
+        } catch (SQLException ex) {
+            Logger.getLogger(c_koneksi.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("Koneksi Gagal");
+        }
+        return koneksi;
+    }
+ 
     
     public static Object getConnection() {       
         return null;        

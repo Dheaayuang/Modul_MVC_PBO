@@ -10,7 +10,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import javax.swing.JOptionPane;
+import pack.control.login_koneksi;
 
 /**
  *
@@ -18,7 +20,9 @@ import javax.swing.JOptionPane;
  */
 public class login extends javax.swing.JFrame {
 
-    private String user;
+    static String useraktif;
+
+    String user;
 
     /**
      * Creates new form login
@@ -94,6 +98,11 @@ public class login extends javax.swing.JFrame {
         btnSignIn.setBounds(200, 210, 80, 40);
 
         btnSignUp.setText("Sign Up");
+        btnSignUp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSignUpActionPerformed(evt);
+            }
+        });
         jPanel1.add(btnSignUp);
         btnSignUp.setBounds(20, 210, 80, 40);
 
@@ -115,6 +124,7 @@ public class login extends javax.swing.JFrame {
 
     private void btnSignInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSignInActionPerformed
         // TODO add your handling code here:
+        
         Connection connection;   
         PreparedStatement ps;      
         try {       
@@ -125,7 +135,7 @@ public class login extends javax.swing.JFrame {
             ResultSet result =ps.executeQuery();    
             if(result.next()){               
                 new home().show();              
-                user = txtnama.getText(); //perlu deklarasi user diclass utama. 
+                useraktif = txtnama.getText(); //perlu deklarasi user diclass utama. 
                 this.dispose();        
             }           
             else{       
@@ -137,6 +147,21 @@ public class login extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(rootPane,"Gagal!");  
         }
     }//GEN-LAST:event_btnSignInActionPerformed
+
+    private void btnSignUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSignUpActionPerformed
+        // TODO add your handling code here:
+        String username = txtnama.getText();
+        String password = txtpass.getText();
+        
+        try {
+            try (Statement statement = (Statement) login_koneksi.GetConnection().createStatement()){
+                statement.executeUpdate("INSERT INTO tb_akun(username,password) VALUES ('"+username+"','"+password+"');");
+            }
+            JOptionPane.showMessageDialog(null, "Selamat! anda berhasil Sign Up");
+        }catch(Exception t){
+            JOptionPane.showMessageDialog(null,"Mohon maaf, ulangi lagi prosedur");
+        }
+    }//GEN-LAST:event_btnSignUpActionPerformed
 
     /**
      * @param args the command line arguments
